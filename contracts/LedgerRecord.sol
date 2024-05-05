@@ -1,7 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
+import "./UserManagement.sol";
 
 contract LedgerRecord {
+    UserManagement userManagement;
+
+    constructor(address userManagementAddress) {
+        userManagement = UserManagement(userManagementAddress); // 将UserManagement合约地址转换为合约类型
+    }
+
     struct DebtRecord {
         uint id;
         address debtor;
@@ -89,9 +96,12 @@ contract LedgerRecord {
                 true
             )
         );
+        // default register user
+        userManagement.defaultRegisterUserWithAddress(_debtor);
+        userManagement.defaultRegisterUserWithAddress(_creditor);
+
         debtorDebts[_debtor].push(nextId);
         creditorDebts[_creditor].push(nextId);
-
         // used for retrieve all contacts of a user
         // if the contact is not existed, add it to the contact list
         address[] memory allContactsOfDebtor = contactUser[_debtor];
